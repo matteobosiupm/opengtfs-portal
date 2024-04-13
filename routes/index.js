@@ -4,7 +4,7 @@ var router = express.Router();
 // Configuración de la conexión a la base de datos PostgreSQL
 var postgressPass = require('./config');
 const pgp = require('pg-promise')(/* options */)
-const db = pgp('postgres://matteo:' + postgressPass + '@localhost:5432/GTFS')
+const db = pgp('postgres://:' + postgressPass + '@host/db')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
