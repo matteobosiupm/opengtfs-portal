@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include header%>
+    <link rel="stylesheet" href="../stylesheets/styles.css">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <!-- Banner -->
+      <div class="row text-light p-3 banner">
+        <div class="col-1 d-flex align-items-center">
+          <a href="https://github.com/matteobosiupm/openGTFS" target="_blank"> 
+              <img src="../images/pngwing.png" alt="Descripción de la imagen" style="width: 40px; height: 40px;">
+          </a>
+        </div>
+        <div class="col-8 d-flex align-items-center justify-content-center">
+          <h1 class="font-weight-bold">OpenGTFS Portal</h1>
+        </div>
+        <div class="col-3 d-flex align-items-center justify-content-end">
+          <button id="showNewsletterModal" class="btn btn-outline-light" data-toggle="modal" data-target="#newsletterModal">Subscribe to Newsletter</button>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="newsletterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Subscribe to Newsletter</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form id="newsletterForm">
+                  <div class="form-group">
+                    <input type="email" class="form-control" name="email" placeholder="Enter your email" style="background-color: #343a40; color: #ffffff;">
+                  </div>
+                  <button type="submit" class="btn btn-outline-light">Subscribe</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>      
+             
+      </div>
+      <br>
+
+      <script>
+        $(document).ready(function() {
+          $('#newsletterForm').submit(function(event) {
+            event.preventDefault(); // Evitar que se envíe el formulario normalmente
+            
+            var formData = $(this).serialize(); // Obtener los datos del formulario
+            
+            // Enviar la solicitud POST a la ruta /subscribe
+            $.post('/subscribe', formData)
+              .done(function(response) {
+                // Manejar la respuesta exitosa
+                $('#newsletterModal').modal('hide'); // Ocultar el modal
+                alert('Successfully subscribed!');
+              })
+              .fail(function(xhr, status, error) {
+                // Manejar el error
+                var errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Internal Server Error';
+                alert('Subscription failed: ' + errorMessage);
+              });
+          });
+        });
+      </script>
+
+    <div class="row">
+      <!-- Panel lateral izquierdo -->
+      <div class="col-lg-2 p-0">
+        <div class="bg-dark text-light h-100">
+          <div class="list-group list-group-flush">
+            <a href="/" class="list-group-item list-group-item-action bg-dark text-light">Home</a>
+            <a href="/speed" class="list-group-item list-group-item-action bg-dark text-light">Speed</a>
+            <a href="/frequency" class="list-group-item list-group-item-action bg-dark text-light">Frequency</a>
+            <a href="/service-area" class="list-group-item list-group-item-action bg-dark text-light">Service Area</a>
+            <a href="/report" class="list-group-item list-group-item-action bg-dark text-light">Report</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido principal -->
+      <div class="col-lg-10 main-content">
+        <h2>HOME PAGE</h2><br>
+        <h4 class="font-italic">What's the goal of OpenGTFS Dashboard?</h4><br>
+        <div class="row">
+          <div class="col-md-4">
+            <img src="../images/transport.png" alt="Imagen" class="img-fluid rounded" style="width: auto; height: 300px;">
+          </div>
+          <div class="col-md-8">
+            <br><p>
+              This website aims to provide a comprehensive analysis of public transportation networks using <b>GTFS (General Transit Feed Specification)</b> files. Our geoportal offers tools and visualizations to analyze and explore transportation data, allowing users to gain insights into network efficiency, accessibility, and performance metrics.
+            </p>
+            <p>
+              We strive to be an open platform, sharing our codebase on GitHub and encouraging collaboration and contributions from the community. By fostering an open-source approach, we aim to promote transparency and innovation in the field of transportation planning and analysis.
+            </p>
+            <p>
+              <i>Don't miss out on our latest updates and features! Subscribe to our newsletter to stay informed about new releases, tutorials, and exciting developments in transportation analysis and urban mobility.</i>
+            </p>
+          </div>          
+          <div class="col-md-8">
+            <br><br><h5 class="font-weight-bold" id="actualDate">Available Networks (ACTUAL DATE):</h5> <br>
+          </div>
+
+          <script>
+            var actualDateElement = document.getElementById('actualDate');
+          
+            var currentDate = new Date();
+          
+            var formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+          
+            actualDateElement.textContent = "Available Networks (" + formattedDate + ")";
+          </script>          
+
+          <br>
+          <table class="col-md-11 table table-dark table-striped">
+            <thead class="bg-light text-dark">
+              <tr>
+                <th scope="col">CITY</th>
+                <th scope="col">MEAN OF TRANSPORTATION</th>
+                <th scope="col">STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% schemas.forEach(function(schema) { %>
+                <tr>
+                  <td><b><%= schema.city %></b></td>
+                  <td><%= schema.transportation %></td>
+                  <td><i><%= schema.status %></i></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  </body>
+</html>

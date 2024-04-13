@@ -1,0 +1,72 @@
+body {
+  background-color: #343a40;
+}
+
+.banner {
+  background-color: #262a2e;
+}
+
+body {
+  background-color: #343a40;
+}
+
+.banner h1 {
+  color: #fff;
+}
+
+.bg-secondary {
+  background-color: #e9ecef !important;
+}
+
+
+.bg-dark-text-light {
+  background-color: #343a40;
+  color: #fff;
+  padding: 1rem;
+}
+
+.main-content {
+  background-color: #343a40;
+  color: #fff;
+}
+
+#actualDate {
+  text-decoration: underline;
+}
+
+#map {
+  height: 60vh; /* El mapa tomará el 80% de la altura de la ventana del navegador */
+}
+
+.modal-content {
+  border: 2px solid #ffffff; /* Cambia el color del borde si lo deseas */
+}
+
+.modal-header {
+  background-color: #343a40; /* Cambia el color de fondo del encabezado */
+  color: #ffffff; /* Cambia el color del texto del encabezado */
+  border-bottom: 1px solid #ffffff; /* Cambia el color de la línea inferior del encabezado */
+}
+
+.modal-body {
+  background-color: #343a40; /* Cambia el color de fondo del cuerpo del modal */
+  color: #ffffff; /* Cambia el color del texto del cuerpo del modal */
+}
+
+.large-rectangle {
+  width: 100%; /* Ocupa todo el ancho disponible */
+  height: 480px; /* Altura deseada del rectángulo */
+  background-color: rgb(100, 99, 99); /* Color de fondo */
+  border: 1px solid rgb(100, 99, 99); /* Borde */
+  border-radius: 10px; /* Borde redondeado */
+  padding: 20px; /* Espacio interno */
+  text-align: center; /* Alineación del texto al centro */
+  margin-bottom: 20px; /* Margen inferior para separarlo del contenido siguiente */
+}
+
+.large-rectangle p {
+  font-size: 30px; /* Tamaño de fuente del texto del aviso */
+  color: #f4efef; /* Color del texto */
+  margin-top: 200px; /* Margen superior para centrar verticalmente el texto */
+  font-weight: bold;
+}

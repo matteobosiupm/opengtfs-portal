@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include header%>
+    <link rel="stylesheet" href="../stylesheets/styles.css">
+    
+  </head>
+  <body>
+    <div class="container-fluid">
+      <!-- Banner -->
+      <div class="row text-light p-3 banner">
+        <div class="col-1 d-flex align-items-center">
+          <a href="https://github.com/matteobosiupm/openGTFS" target="_blank"> 
+              <img src="../images/pngwing.png" alt="Descripción de la imagen" style="width: 40px; height: 40px;">
+          </a>
+        </div>
+        <div class="col-8 d-flex align-items-center justify-content-center">
+          <h1 class="font-weight-bold">OpenGTFS Portal</h1>
+        </div>
+        <div class="col-3 d-flex align-items-center justify-content-end">
+          <button id="showNewsletterModal" class="btn btn-outline-light" data-toggle="modal" data-target="#newsletterModal">Subscribe to Newsletter</button>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="newsletterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Subscribe to Newsletter</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form id="newsletterForm">
+                  <div class="form-group">
+                    <input type="email" class="form-control" name="email" placeholder="Enter your email" style="background-color: #343a40; color: #ffffff;">
+                  </div>
+                  <button type="submit" class="btn btn-outline-light">Subscribe</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>      
+             
+      </div>
+      <br>
+
+      <script>
+        $(document).ready(function() {
+          $('#newsletterForm').submit(function(event) {
+            event.preventDefault(); // Evitar que se envíe el formulario normalmente
+            
+            var formData = $(this).serialize(); // Obtener los datos del formulario
+            
+            // Enviar la solicitud POST a la ruta /subscribe
+            $.post('/subscribe', formData)
+              .done(function(response) {
+                // Manejar la respuesta exitosa
+                $('#newsletterModal').modal('hide'); // Ocultar el modal
+                alert('Successfully subscribed!');
+              })
+              .fail(function(xhr, status, error) {
+                // Manejar el error
+                var errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Internal Server Error';
+                alert('Subscription failed: ' + errorMessage);
+              });
+          });
+        });
+      </script>
+      
+
+      <div class="row">
+        <!-- Panel lateral izquierdo -->
+        <div class="col-lg-2 p-0">
+          <div class="bg-dark text-light h-100">
+            <div class="list-group list-group-flush">
+              <a href="/" class="list-group-item list-group-item-action bg-dark text-light">Home</a>
+              <a href="/speed" class="list-group-item list-group-item-action bg-dark text-light">Speed</a>
+              <a href="/frequency" class="list-group-item list-group-item-action bg-dark text-light">Frequency</a>
+              <a href="/service-area" class="list-group-item list-group-item-action bg-dark text-light">Service Area</a>
+              <a href="/report" class="list-group-item list-group-item-action bg-dark text-light">Report</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="col-lg-10 main-content">
+          <h2>SPEED ANALYSIS</h2><br>
+          <!-- Selector de ciudad, país, tipo de transporte -->
+          <div class="container mb-3">
+            <div class="row">
+              <div class="col">
+                <select id="networkSelector" class="form-control">
+                  <option value="">Select a Network</option>
+                  <% schemas.forEach(schema => { %>
+                    <!-- Imprimir los nombres formateados para verificar -->
+                    <%- console.log(schema) %>
+                    <option value="<%= schema %>"><%= schema %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- Mapa -->
+          <div id="map"></div>
+          <script>
+              var map = L.map('map').setView([40.965, -5.664], 14);
+              L.esri.basemapLayer('DarkGray').addTo(map);
+              var selectedArea = null;
+              var legendControl = null;
+
+              // Agregar un controlador de eventos para el cambio en el elemento select
+              document.getElementById('networkSelector').addEventListener('change', function() {
+                var select = this.value; 
+                console.log(select); // Mostrar en la consola el valor seleccionado
+                updateMapLayer(select);
+              });
+
+              function updateMapLayer(select) {
+                var formattedNetwork = select.toLowerCase().replace(/ - /g, '_');
+                console.log(formattedNetwork);
+
+                if (selectedArea !== null) {
+                    map.removeLayer(selectedArea);
+                }
+
+                $.ajax('http://localhost/geoserver/wfs', {
+                  type: 'GET',
+                  data: {
+                    service: 'WFS',
+                    version: '1.1.0',
+                    request: 'GetFeature',
+                    typename: 'GTFS_LAYERS:' + formattedNetwork + '_speeds', // Usar el valor seleccionado
+                    srsname: 'EPSG:4326',
+                    outputFormat: 'text/javascript',
+                  },
+                  dataType: 'jsonp',
+                  jsonpCallback: 'callback:handleJson',
+                  jsonp: 'format_options'
+                });
+              }
+
+              var range1, range2, range3, range4, range5;
+
+              // Función para obtener el color según el valor de velocidad
+              function getColor(speed) {
+                  if (speed <= range1) {
+                      return '#FFEDA0';
+                  } else if (speed <= range2) {
+                      return '#FC4E2A';
+                  } else if (speed <= range3) {
+                      return '#E31A1C';
+                  } else if (speed <= range4) {
+                      return '#BD0026';
+                  } else if (speed <= range5) {
+                      return '#800026';
+                  } else {
+                      return '000000';
+                  }
+              }
+
+              // Función de devolución de llamada para AJAX
+              function handleJson(data) {
+                // Obtener los valores de velocidad de todas las características
+                var speeds = data.features.map(function(feature) {
+                  return feature.properties.speed_kmh;
+                });
+
+                // Ordenar los valores de velocidad
+                speeds.sort(function(a, b) {
+                  return a - b;
+                });
+
+                // Dividir los valores en 5 rangos
+                range1 = speeds[Math.floor(speeds.length * 0.2)];
+                range2 = speeds[Math.floor(speeds.length * 0.4)];
+                range3 = speeds[Math.floor(speeds.length * 0.6)];
+                range4 = speeds[Math.floor(speeds.length * 0.8)];
+                range5 = speeds[speeds.length - 1];
+
+                console.log(range1);
+
+                selectedArea = L.geoJson(data, {
+                  style: function(feature) {
+                    var speed = feature.properties.speed_kmh;
+                    return {
+                      weight: 1,
+                      opacity: 1,
+                      color: getColor(speed),
+                      dashArray: '3',
+                      fillOpacity: 0.7
+                    };
+                  },
+                  onEachFeature: function(feature, layer) {
+                      var popupContent = "<b>Segment Name:</b> " + feature.properties.segment_name + "<br><b>Speed:</b> " + feature.properties.speed_kmh + " km/h";
+                      layer.bindPopup(popupContent);
+                  }
+                }).addTo(map);
+                map.fitBounds(selectedArea.getBounds());
+
+                createLegend();
+              }
+
+              // Crea la leyenda
+              function createLegend() {
+
+                  // Eliminar la leyenda anterior si existe
+                  if (legendControl !== null) {
+                      map.removeControl(legendControl);
+                  }
+
+                  var legend = L.control({ position: "bottomleft" });
+                  legend.onAdd = function(map) {
+                      var div = L.DomUtil.create("div", "info legend");
+                      var html = "<strong>Average Speed</strong><br>";
+
+                      var ranges = [
+                          { label: '<= ' + range1 + ' km/h', color: "#FFEDA0" },
+                          { label: '> ' + range1 + ' - <= ' + range2 + ' km/h', color: "#FC4E2A" },
+                          { label: '> ' + range2 + ' - <= ' + range3 + ' km/h', color: "#E31A1C" },
+                          { label: '> ' + range3 + ' - <= ' + range4 + ' km/h', color: "#BD0026" },
+                          { label: '> ' + range4 + ' - <= ' + range5 + ' km/h', color: "#800026" }
+                      ];
+
+                      ranges.forEach(function(range) {
+                          html += '<div><div style="width: 20px; height: 2px; background-color:' + range.color + '; display:inline-block;"></div> ' + range.label + '</div>';
+                      });
+
+                      div.innerHTML = html;
+                      return div;
+                  };
+                  legendControl = legend.addTo(map);                  
+              }
+
+
+          </script>
+        </div>
+        
+      </div>
+    </div>
+  </body>
+</html>

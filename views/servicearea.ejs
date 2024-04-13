@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include header%>
+    <link rel="stylesheet" href="../stylesheets/styles.css">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <!-- Banner -->
+      <div class="row text-light p-3 banner">
+        <div class="col-1 d-flex align-items-center">
+          <a href="https://github.com/matteobosiupm/openGTFS" target="_blank"> 
+              <img src="../images/pngwing.png" alt="Descripción de la imagen" style="width: 40px; height: 40px;">
+          </a>
+        </div>
+        <div class="col-8 d-flex align-items-center justify-content-center">
+          <h1 class="font-weight-bold">OpenGTFS Portal</h1>
+        </div>
+        <div class="col-3 d-flex align-items-center justify-content-end">
+          <button id="showNewsletterModal" class="btn btn-outline-light" data-toggle="modal" data-target="#newsletterModal">Subscribe to Newsletter</button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="newsletterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Subscribe to Newsletter</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form id="newsletterForm">
+                  <div class="form-group">
+                    <input type="email" class="form-control" name="email" placeholder="Enter your email" style="background-color: #343a40; color: #ffffff;">
+                  </div>
+                  <button type="submit" class="btn btn-outline-light">Subscribe</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>      
+             
+      </div>
+      <br>
+
+      <script>
+        $(document).ready(function() {
+          $('#newsletterForm').submit(function(event) {
+            event.preventDefault(); // Evitar que se envíe el formulario normalmente
+            
+            var formData = $(this).serialize(); // Obtener los datos del formulario
+            
+            // Enviar la solicitud POST a la ruta /subscribe
+            $.post('/subscribe', formData)
+              .done(function(response) {
+                // Manejar la respuesta exitosa
+                $('#newsletterModal').modal('hide'); // Ocultar el modal
+                alert('Successfully subscribed!');
+              })
+              .fail(function(xhr, status, error) {
+                // Manejar el error
+                var errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Internal Server Error';
+                alert('Subscription failed: ' + errorMessage);
+              });
+          });
+        });
+      </script>
+
+  <div class="row">
+    <!-- Panel lateral izquierdo -->
+    <div class="col-lg-2 p-0">
+      <div class="bg-dark text-light h-100">
+        <div class="list-group list-group-flush">
+          <a href="/" class="list-group-item list-group-item-action bg-dark text-light">Home</a>
+          <a href="/speed" class="list-group-item list-group-item-action bg-dark text-light">Speed</a>
+          <a href="/frequency" class="list-group-item list-group-item-action bg-dark text-light">Frequency</a>
+          <a href="/service-area" class="list-group-item list-group-item-action bg-dark text-light">Service Area</a>
+          <a href="/report" class="list-group-item list-group-item-action bg-dark text-light">Report</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-10 main-content">
+      <h2>SERVICE AREA ANALYSIS</h2><br>
+      
+      <!-- Contenedor del rectángulo grande -->
+      <div class="large-rectangle">
+        <p>Analysis not yet available.</p>
+      </div>
+    </div>
+    
+  </div>
+</div>
+</body>
+</html>
