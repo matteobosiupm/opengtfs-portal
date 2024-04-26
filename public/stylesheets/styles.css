@@ -35,38 +35,38 @@ body {
 }
 
 #map {
-  height: 60vh; /* El mapa tomará el 80% de la altura de la ventana del navegador */
+  height: 60vh; 
 }
 
 .modal-content {
-  border: 2px solid #ffffff; /* Cambia el color del borde si lo deseas */
+  border: 2px solid #ffffff;
 }
 
 .modal-header {
-  background-color: #343a40; /* Cambia el color de fondo del encabezado */
-  color: #ffffff; /* Cambia el color del texto del encabezado */
-  border-bottom: 1px solid #ffffff; /* Cambia el color de la línea inferior del encabezado */
+  background-color: #343a40; 
+  color: #ffffff; 
+  border-bottom: 1px solid #ffffff;
 }
 
 .modal-body {
-  background-color: #343a40; /* Cambia el color de fondo del cuerpo del modal */
-  color: #ffffff; /* Cambia el color del texto del cuerpo del modal */
+  background-color: #343a40; 
+  color: #ffffff;
 }
 
 .large-rectangle {
-  width: 100%; /* Ocupa todo el ancho disponible */
-  height: 480px; /* Altura deseada del rectángulo */
-  background-color: rgb(100, 99, 99); /* Color de fondo */
-  border: 1px solid rgb(100, 99, 99); /* Borde */
-  border-radius: 10px; /* Borde redondeado */
-  padding: 20px; /* Espacio interno */
-  text-align: center; /* Alineación del texto al centro */
-  margin-bottom: 20px; /* Margen inferior para separarlo del contenido siguiente */
+  width: 100%; 
+  height: 480px; 
+  background-color: rgb(100, 99, 99); 
+  border: 1px solid rgb(100, 99, 99); 
+  border-radius: 10px; 
+  padding: 20px; 
+  text-align: center; 
+  margin-bottom: 20px; 
 }
 
 .large-rectangle p {
-  font-size: 30px; /* Tamaño de fuente del texto del aviso */
-  color: #f4efef; /* Color del texto */
-  margin-top: 200px; /* Margen superior para centrar verticalmente el texto */
+  font-size: 30px;
+  color: #f4efef;
+  margin-top: 200px; 
   font-weight: bold;
 }
